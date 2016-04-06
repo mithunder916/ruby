@@ -2,6 +2,6 @@ animals=["tiger","cheetah",'elephant','kangaroo','koala','skink','toucan','komod
 fav='tiger'
 animals.each do |x|
   if x == fav
-    puts "My fav is the #{x}"
+    puts "My favorite is the #{x}"
   end
 end

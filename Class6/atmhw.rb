@@ -39,7 +39,7 @@ def deposit
     if gets.chomp==@pin
       puts "How much do you want to deposit?"
         dep_amt=gets.chomp.to_i
-          @balance=@balance+dep_amt
+          @balance=@balance+dep_amt #could also have use -= in the next line
             puts "You now have #{@balance} in your account."
     else
       pin_error
