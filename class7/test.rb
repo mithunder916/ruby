@@ -1,16 +1,12 @@
-#@wrong_answers=Array.new
-#wrong_answers
-
 class Student
   def initialize(email,password,score)
     @email=email
     @password=password
     @score=score.to_i
   end
-
+  
 def wrong_answers
   @wrong_ans = Array.new
-  #wrong_ans=@wrong_ans
 end
 
 def test
