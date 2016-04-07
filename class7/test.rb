@@ -2,11 +2,11 @@ class Student
   def initialize(email,password,score)
     @email=email
     @password=password
-    @score=score.to_i
+    @score=score.to_i  #unnecessary
   end
-  
+
 def wrong_answers
-  @wrong_ans = Array.new
+  @wrong_ans = Array.new   #why did @wrong_ans=[] not work
 end
 
 def test
@@ -55,7 +55,7 @@ def login
         test
       elsif mail_entry!=@email || pwd_entry!=@password
         puts "Email or password not on file. Try again"
-        login
+        login #recursion
       end
 end
 
