@@ -2,21 +2,24 @@ class Game
   def initialize
     @deck_rank = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, "Ace","King","Queen","Jack"]
     @deck_suit = %w[Clubs Diamonds Spades Hearts]
-      playerdeal
-      compdeal
-      playerturn
-      puts "The dealer reveals his hole card. His full hand is #{@dealer_hand}."
-      compturn
-      showdown
+      puts "Welcome to Blackjack."
+      round
+      #puts "The dealer reveals his hole card. His full hand is #{@dealer_hand}."
+      #compturn
+      #showdown
   end
-
+  def round
+    puts "A new round begins."
+    playerdeal
+    compdeal
+    playerturn
+  end
   def drawcard
     @drawn_val=@deck_rank.shuffle[0]
     @card=Array.new
       @card << "the #{@drawn_val} of #{@deck_suit.shuffle[0]}"
         numconvert
   end
-
   def numconvert   #converts royal suits into numbers
     if @drawn_val=="Ace"
       @drawn_val=11
@@ -56,11 +59,15 @@ class Game
         ans=gets.chomp.downcase
           if ans=="hit"
             hit
+          else
+            compturn
           end
     elsif @player_value.reduce(:+)==21
       puts "Lucky you. 21, right on the money."
+        compturn
     else
-      puts "Ooh, you went over. Sorry, but you lose."  #include termination
+      puts "Ooh, you went over. Sorry, but you lose."
+        round  #include money loss
     end
   end
   def hit
@@ -77,20 +84,21 @@ class Game
             compturn
       elsif @dealer_value.reduce(:+)>21
         puts "The dealer overdrew! You win the round."
+          round #include money gain
       else
-        puts "The dealer's hand has a value of #{@dealer_value.reduce(:+)}"
+        puts "The dealer's hand has a value of #{@dealer_value.reduce(:+)}."
+          showdown
       end
   end
   def showdown
     if @player_value.reduce(:+)>@dealer_value.reduce(:+)
-      puts "You won the round!"
+      puts "You won the round!"  #money gain
     elsif @dealer_value.reduce(:+)>@player_value.reduce(:+)
-      puts "You lost the round."
+      puts "You lost the round."  #money loss
     else
-      puts "Looks like you tied."
+      puts "Looks like you tied." #money returned
     end
   end
-
 end
 
 Game.new
