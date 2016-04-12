@@ -1,39 +1,40 @@
-#BIG ISSUE: How do I get the Game class and the methods within it to recognize the instance variable that I defined within the player class. I'm specifically talking about @money and @bet_amt. When I try to use them in 'Game' methods, I just get blanks.
-
 class Player
   def initialize(money)
     $money=money
   end
-
   def bet
-    puts "You have $#{$money} remaining. How much would you like to bet?" #include check for overbetting
-      bet_amt = gets.chomp.to_f
-        if bet_amt==0.0
-          puts "Please enter a valid number."
-          bet
-        else
-          $bet_amt = bet_amt
-          #puts @money-@bet_amt
-        end
+    if $money>0.0
+      puts "You have $#{$money} remaining. How much would you like to bet?"
+        bet_amt = gets.chomp.to_f
+          if bet_amt==0.0
+            puts "Please enter a valid number."
+            bet
+          elsif bet_amt>$money
+            puts "You can't bet more than you have. Duh."
+            bet
+          else
+            $bet_amt = bet_amt
+          end
+    else
+      puts "Thanks for playing. Come back when you're not BROKE."
+        abort
+    end
   end
 end
-
 class Game
   def initialize(player)
     @pl = player
     @deck_rank = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, "Ace","King","Queen","Jack"]
     @deck_suit = %w[Clubs Diamonds Spades Hearts]
       puts "Welcome to Blackjack."
-      @pl.bet
-      puts $money
-      puts $bet_amt
-      round
+        @pl.bet
+        round
   end
   def round #deals both hands, and starts player's turn
-    puts "A new round begins."
-    playerdeal
-    compdeal
-    playerturn
+      puts "A new round begins."
+      playerdeal
+      compdeal
+      playerturn
   end
   def drawcard #draws a random card and puts it in an array.
     @drawn_val=@deck_rank.shuffle[0]
@@ -75,8 +76,6 @@ class Game
           compdraw
   end
   def playerturn #check player's hand value and allows option of hitting if under 21
-    #puts @money
-    #puts @bet_amt
     if @player_value.reduce(:+)<21
       puts "Would you like to hit or stand?"
         ans=gets.chomp.downcase
@@ -89,11 +88,10 @@ class Game
       puts "Lucky you. 21, right on the money." #automatically goes to dealer's turn
         compturn
     else
-      puts "Ooh, you went over. Sorry, but you lose." #ends round
+      puts "Ooh, you went over. Sorry, but you lose this round." #ends round
         $money-=$bet_amt
-        puts "You have $#{$money} left." #why is @money empty?
         @pl.bet
-        round  #include money loss
+        round #couldn't get .bet to run .round without redefining a bunch of code
     end
   end
   def hit #draws and reports
@@ -110,7 +108,9 @@ class Game
             compturn
       elsif @dealer_value.reduce(:+)>21
         puts "The dealer overdrew! You win the round."
-          round #include money gain
+          $money+=$bet_amt
+          @pl.bet
+          round
       else
         puts "The dealer's hand has a value of #{@dealer_value.reduce(:+)}."
           showdown
@@ -118,11 +118,19 @@ class Game
   end
   def showdown #activates only if no one overdrew. compares values.
     if @player_value.reduce(:+)>@dealer_value.reduce(:+)
-      puts "You won the round!"  #money gain
+      puts "You won the round!"
+        $money+=$bet_amt
+          @pl.bet
+          round
     elsif @dealer_value.reduce(:+)>@player_value.reduce(:+)
-      puts "You lost the round."  #money loss
+      puts "You lost the round."
+        $money-=$bet_amt
+          @pl.bet  #money loss
+          round
     else
       puts "Looks like you tied." #money returned
+        @pl.bet
+        round
     end
   end
 end
