@@ -1,44 +1,71 @@
+def playagain
+puts "Would you like to play again? (y/n)"
+  ans=gets.chomp.downcase
+    if ans=="y"
+      gamestart
+    elsif ans=='n'
+      abort
+    else
+      playagain
+    end
+end
+
 def didyouwin
-  if (@arr2<=>@arr1)==0
-    p @arr2
+  if (@ans_array<=>@OG_array)==0
+    p @ans_array
       puts "Congrats! You won!"
-      abort   #could add option to replay
+        playagain
   end
 end
 
 def replace
-  @keynum=@arr3.index{|a| a==@guess} #finds index of letter
-    @arr2.delete_at(@keynum)         #replaces array of blanks with letter
-      @arr2.insert(@keynum,@guess)
-    @arr3.delete_at(@keynum)         #replaces changing array with nil, so we can re-check
-      @arr3.insert(@keynum,nil)
+  @keynum=@mod_array.index{|a| a==@guess} #finds index of guessed letter
+    @ans_array.delete_at(@keynum)         #replaces array of blanks with letter
+      @ans_array.insert(@keynum,@guess)
+    @mod_array.delete_at(@keynum)         #replaces changing array with nil, so we can re-check
+      @mod_array.insert(@keynum,nil)
          didyouwin
-          if @arr3.include?(@guess)==true   #checks if the letter occurs more than once in the word
+          if @mod_array.include?(@guess)==true   #checks if the letter occurs more than once in the word
            replace
          end
+end
+
+def wrong_ans
+  @tries-=1
+    if @tries==0
+      puts "The hangman is dead. Game over."
+        playagain
+    else
+      puts "You have #{@tries} tries left before the hangman meets his maker."
+        guessround
+    end
 end
 
 def guessround
 puts "Please guess a letter that you think is in the word." #make recursive; branch conditional to check if guess is a letter
   @guess=gets.chomp.upcase
-    if @arr3.include?(@guess)==true
-      puts "Correct!"
+    if @mod_array.include?(@guess)==true
+      puts "Correct."
       replace
-        p @arr2
+        p @ans_array
         guessround
     else
-      puts "wrong" #add wrong answer sequence
+      puts "Wrong."
+        wrong_ans
     end
 end
 
-puts "Let's play Hangman. Please get someone to enter a word."
-  @arr2=[]
-    # @word=gets.chomp.upcase
-    @word="MELLOW" #just for testing
-      @arr1=@word.split(//)
-        p @arr1
-      @arr3=@word.split(//) #can't set @arr3=@arr1, or any change to one will change the other
-      @arr1.count.times do
-        @arr2.push("_")
-      end
-        guessround
+def gamestart
+  puts "Let's play Hangman. Please get someone to enter a word."
+    @ans_array=[]
+    @tries=6
+      @word=gets.chomp.upcase
+        @OG_array=@word.split(//)
+        @mod_array=@word.split(//) #can't set @mod_array=@OG_array, or any change to one will change the other
+          @OG_array.count.times do
+            @ans_array.push("_")
+          end
+            guessround
+end
+
+gamestart
