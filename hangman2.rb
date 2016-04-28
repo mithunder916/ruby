@@ -86,6 +86,9 @@ def gamestart
           @OG_array.count.times do
             @ans_array.push("_")
           end
+          25.times do
+            puts " "
+          end
             guessround
 end
 
